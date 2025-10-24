@@ -2,7 +2,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = componentTagger;
-const parser_1 = require("@babel/parser");
+let babelParser = null;
+let parserLoadError = null;
+try {
+    // @babel/parser is an optional dependency used only for enhanced
+    // visual-edit annotations.  In constrained environments (like this
+    // sandbox) it may be blocked from installing, so we gracefully fall
+    // back to a no-op transform when it isn't available.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    babelParser = require("@babel/parser");
+}
+catch (error) {
+    parserLoadError = error;
+}
 const magic_string_1 = require("magic-string");
 const estree_walker_1 = require("estree-walker");
 const path = require("path");
@@ -378,7 +390,17 @@ function componentTagger(src, map) {
     try {
         if (/node_modules/.test(this.resourcePath))
             return done(null, src, map);
-        const ast = (0, parser_1.parse)(src, {
+        if (!babelParser || typeof (babelParser === null || babelParser === void 0 ? void 0 : babelParser.parse) !== "function") {
+            if (parserLoadError && !componentTagger._warnedMissingParser) {
+                componentTagger._warnedMissingParser = true;
+                const message = `[visual-edits] Skipping component tagging because @babel/parser could not be loaded.\n` +
+                    `Visual editor overlays will be disabled, but the application can still run.\n` +
+                    `Underlying error: ${parserLoadError instanceof Error ? parserLoadError.message : String(parserLoadError)}`;
+                console.warn(message);
+            }
+            return done(null, src, map);
+        }
+        const ast = babelParser.parse(src, {
             sourceType: 'module',
             plugins: ['jsx', 'typescript'],
         });
@@ -458,3 +480,4 @@ function componentTagger(src, map) {
         done(err);
     }
 }
+componentTagger._warnedMissingParser = false;
