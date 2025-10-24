@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1761148437777,
+      "tag": "0000_modern_microbe",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1761216349284,
+      "tag": "0001_faulty_robbie_robertson",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1761220728467,
+      "tag": "0002_flat_marvel_zombies",
+      "breakpoints": true
+    }
+  ]
+}
