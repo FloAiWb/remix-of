@@ -150,6 +150,10 @@ export default function Header() {
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => router.push('/admin/products')}>
+                        Админка
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleSignOut}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Выйти
@@ -214,6 +218,11 @@ export default function Header() {
                             <p className="text-sm font-medium">{session.user.name}</p>
                             <p className="text-xs text-muted-foreground">{session.user.email}</p>
                           </div>
+                          <Link href="/admin/products" className="block">
+                            <Button variant="secondary" className="w-full justify-start">
+                              Админка
+                            </Button>
+                          </Link>
                           <Button
                             variant="outline"
                             className="w-full justify-start"
