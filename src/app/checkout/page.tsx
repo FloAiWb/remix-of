@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,7 @@ export default function CheckoutPage() {
   const deliveryPrice = totalAmount >= 5000 ? 0 : (selectedDelivery?.price || 0);
   const finalTotal = totalAmount + deliveryPrice;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Validation

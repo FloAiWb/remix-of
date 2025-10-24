@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type MouseEvent } from "react";
 
 export const CHANNEL = "ORCHIDS_HOVER_v1" as const;
 const VISUAL_EDIT_MODE_KEY = "orchids_visual_edit_mode" as const;
@@ -954,7 +954,7 @@ export default function HoverReceiver() {
   }, []);
 
   // Handle resize
-  const handleResizeStart = (e: React.MouseEvent, handle: string) => {
+  const handleResizeStart = (e: MouseEvent, handle: string) => {
     if (!focusedElementRef.current) return;
 
     e.preventDefault();

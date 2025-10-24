@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Cookie } from 'lucide-react';
@@ -15,7 +15,7 @@ export function CookieConsent() {
     }
   }, []);
 
-  const acceptCookies = (e: React.MouseEvent) => {
+  const acceptCookies = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     console.log('Accept cookies clicked');
@@ -23,7 +23,7 @@ export function CookieConsent() {
     setIsVisible(false);
   };
 
-  const declineCookies = (e: React.MouseEvent) => {
+  const declineCookies = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     console.log('Decline cookies clicked');
