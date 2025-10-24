@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { products, categories, materials } from '@/data/products';
 import { SlidersHorizontal } from 'lucide-react';
 
-export default function CatalogPage() {
+function CatalogContent() {
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('Все');
   const [selectedMaterial, setSelectedMaterial] = useState('Все материалы');
@@ -62,7 +62,7 @@ export default function CatalogPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <>
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Каталог товаров</h1>
         <p className="text-muted-foreground">
@@ -267,6 +267,20 @@ export default function CatalogPage() {
           )}
         </div>
       </div>
+    </>
+  );
+}
+
+export default function CatalogPage() {
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      }>
+        <CatalogContent />
+      </Suspense>
     </div>
   );
 }
