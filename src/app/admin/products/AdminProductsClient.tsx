@@ -147,12 +147,20 @@ export function AdminProductsClient() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    console.log('📤 Starting file upload...', { fileCount: files.length });
+
     try {
       setUploading(true);
       const uploadedUrls: string[] = [];
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        console.log(`📁 Uploading file ${i + 1}/${files.length}:`, {
+          name: file.name,
+          size: file.size,
+          type: file.type
+        });
+
         const formData = new FormData();
         formData.append("file", file);
 
@@ -161,12 +169,25 @@ export function AdminProductsClient() {
           body: formData,
         });
 
+        console.log(`📥 Upload response status: ${res.status}`);
+
         if (!res.ok) {
-          const error = await res.json();
-          throw new Error(error?.error || "Ошибка загрузки");
+          const errorText = await res.text();
+          console.error('❌ Upload failed:', errorText);
+          
+          let errorMessage = "Ошибка загрузки";
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson?.error || errorMessage;
+          } catch {
+            errorMessage = errorText || errorMessage;
+          }
+          
+          throw new Error(errorMessage);
         }
 
         const data = await res.json();
+        console.log('✅ Upload successful:', data);
         uploadedUrls.push(data.url);
       }
 
@@ -177,8 +198,21 @@ export function AdminProductsClient() {
       }));
 
       toast.success(`Загружено изображений: ${uploadedUrls.length}`);
+      console.log('✅ All uploads complete:', uploadedUrls);
     } catch (e: any) {
-      toast.error(e.message || "Ошибка загрузки файлов");
+      console.error('❌ Upload error:', e);
+      
+      // Show detailed error message
+      let errorMsg = e.message || "Ошибка загрузки файлов";
+      
+      if (errorMsg.includes("Supabase Storage error")) {
+        errorMsg += "\n\n💡 Убедитесь, что:\n" +
+          "1. Создан бакет 'product-images' в Supabase\n" +
+          "2. Бакет настроен как публичный\n" +
+          "3. Учетные данные Supabase правильные";
+      }
+      
+      toast.error(errorMsg, { duration: 8000 });
     } finally {
       setUploading(false);
       // Reset input
