@@ -22,9 +22,13 @@ export async function uploadFileToSupabase(
   folder: string = ''
 ): Promise<string | null> {
   try {
+    console.log('Starting upload...', { bucket, folder, fileName: file.name });
+    
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = folder ? `${folder}/${fileName}` : fileName;
+
+    console.log('Uploading to path:', filePath);
 
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -34,19 +38,27 @@ export async function uploadFileToSupabase(
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
-      return null;
+      console.error('Supabase upload error details:', {
+        message: error.message,
+        statusCode: error.statusCode,
+        error: error
+      });
+      throw new Error(`Supabase Storage error: ${error.message}`);
     }
+
+    console.log('Upload successful, getting public URL...');
 
     // Get public URL
     const { data: publicUrlData } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
 
+    console.log('Public URL:', publicUrlData.publicUrl);
+    
     return publicUrlData.publicUrl;
   } catch (error) {
     console.error('Upload error:', error);
-    return null;
+    throw error;
   }
 }
 
