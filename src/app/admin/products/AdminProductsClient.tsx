@@ -28,7 +28,10 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "@/lib/auth-client";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { Pencil, Plus, Trash, Upload, X } from "lucide-react";
+
+// ADMIN EMAIL - only this email can access admin panel
+const ADMIN_EMAIL = "mixmarketplace161@gmail.com";
 
 interface Product {
   id: number;
@@ -69,13 +72,20 @@ export function AdminProductsClient() {
   const [form, setForm] = useState<Omit<Product, "id">>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-  // Protect page: require login
+  // Check if user is admin
+  const isAdmin = session?.user?.email === ADMIN_EMAIL;
+
+  // Protect page: require login and admin email
   useEffect(() => {
     if (!isPending && !session?.user) {
       router.push("/login?redirect=" + encodeURIComponent("/admin/products"));
+    } else if (!isPending && session?.user && !isAdmin) {
+      toast.error("Доступ запрещён. Только администратор может управлять товарами.");
+      router.push("/");
     }
-  }, [session, isPending, router]);
+  }, [session, isPending, isAdmin, router]);
 
   const authHeaders = useMemo(() => {
     if (typeof window === "undefined") return {} as HeadersInit;
@@ -101,9 +111,9 @@ export function AdminProductsClient() {
   };
 
   useEffect(() => {
-    if (session?.user) load();
+    if (session?.user && isAdmin) load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.user]);
+  }, [session?.user, isAdmin]);
 
   const openCreate = () => {
     setEditing(null);
@@ -132,6 +142,56 @@ export function AdminProductsClient() {
       .split(/\n|,/) // newline or comma separated
       .map((s) => s.trim())
       .filter(Boolean);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      setUploading(true);
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error?.error || "Ошибка загрузки");
+        }
+
+        const data = await res.json();
+        uploadedUrls.push(data.url);
+      }
+
+      // Add uploaded URLs to form
+      setForm((f) => ({
+        ...f,
+        images: [...f.images, ...uploadedUrls],
+      }));
+
+      toast.success(`Загружено изображений: ${uploadedUrls.length}`);
+    } catch (e: any) {
+      toast.error(e.message || "Ошибка загрузки файлов");
+    } finally {
+      setUploading(false);
+      // Reset input
+      e.target.value = "";
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setForm((f) => ({
+      ...f,
+      images: f.images.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleSubmit = async () => {
     try {
@@ -186,11 +246,26 @@ export function AdminProductsClient() {
     }
   };
 
-  if (!session?.user) {
+  // Show loading state while checking auth
+  if (isPending) {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Spinner className="h-4 w-4" /> Ожидание авторизации…
+        <Spinner className="h-4 w-4" /> Проверка доступа…
       </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!isAdmin) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <h2 className="text-xl font-semibold mb-2">Доступ запрещён</h2>
+          <p className="text-sm text-muted-foreground">
+            Только администратор ({ADMIN_EMAIL}) может управлять товарами.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -216,7 +291,7 @@ export function AdminProductsClient() {
                 <Plus className="h-4 w-4 mr-2" /> Добавить товар
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editing ? "Редактировать товар" : "Новый товар"}</DialogTitle>
               </DialogHeader>
@@ -264,15 +339,77 @@ export function AdminProductsClient() {
                     placeholder="Кожа"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label>Изображения (каждое с новой строки или через запятую)</Label>
-                  <Textarea
-                    value={(form.images || []).join("\n")}
-                    onChange={(e) => setForm((f) => ({ ...f, images: parseImages(e.target.value) }))}
-                    placeholder={"https://.../image1.jpg\nhttps://.../image2.jpg"}
-                    rows={4}
-                  />
+                
+                {/* Image Upload Section */}
+                <div className="grid gap-3">
+                  <Label>Изображения</Label>
+                  
+                  {/* Upload Button */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById("file-upload")?.click()}
+                      disabled={uploading}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      {uploading ? "Загрузка…" : "Загрузить изображения"}
+                    </Button>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      Макс. 5MB на файл
+                    </span>
+                  </div>
+
+                  {/* Image Preview Grid */}
+                  {form.images.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {form.images.map((url, idx) => (
+                        <div key={idx} className="relative group rounded-lg border overflow-hidden aspect-square">
+                          <img
+                            src={url}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(idx)}
+                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                          {idx === 0 && (
+                            <Badge className="absolute bottom-1 left-1 text-xs">
+                              Основная
+                            </Badge>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Manual URL Input (optional) */}
+                  <details className="text-sm">
+                    <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                      Или добавить URL вручную
+                    </summary>
+                    <Textarea
+                      value={(form.images || []).join("\n")}
+                      onChange={(e) => setForm((f) => ({ ...f, images: parseImages(e.target.value) }))}
+                      placeholder={"https://.../image1.jpg\nhttps://.../image2.jpg"}
+                      rows={3}
+                      className="mt-2"
+                    />
+                  </details>
                 </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                   <label className="flex items-center justify-between rounded-md border p-3">
                     <span className="text-sm">Показывать на главной</span>
