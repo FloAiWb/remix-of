@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail } from 'lucide-react';
@@ -10,7 +10,7 @@ export function NewsletterForm() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!email) {
