@@ -1,0 +1,325 @@
+:root {
+    --gravmix-bg: #0f1115;
+    --gravmix-surface: #161a22;
+    --gravmix-metal: #b6b8bf;
+    --gravmix-accent: #a1c4ff;
+    --gravmix-text: #f4f6fb;
+    --gravmix-muted: #a6a8b3;
+    --gravmix-border: rgba(255, 255, 255, 0.08);
+    --gravmix-glow: 0 0 25px rgba(161, 196, 255, 0.25);
+}
+
+.gravmix {
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    background: var(--gravmix-bg);
+    color: var(--gravmix-text);
+    padding: 32px;
+    border-radius: 16px;
+    border: 1px solid var(--gravmix-border);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+.gravmix a {
+    color: var(--gravmix-text);
+    text-decoration: none;
+}
+
+.gravmix-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 18px;
+    background: var(--gravmix-surface);
+    border-radius: 12px;
+    border: 1px solid var(--gravmix-border);
+    margin-bottom: 28px;
+}
+
+.gravmix-topbar__right {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.gravmix-link {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--gravmix-border);
+    transition: all 0.3s ease;
+}
+
+.gravmix-link:hover {
+    border-color: var(--gravmix-accent);
+    box-shadow: var(--gravmix-glow);
+}
+
+.gravmix-hero {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-items: center;
+    gap: 24px;
+    padding: 28px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(22, 26, 34, 0.95), rgba(15, 17, 21, 0.9));
+    border: 1px solid var(--gravmix-border);
+}
+
+.gravmix-kicker {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gravmix-muted);
+    font-size: 12px;
+}
+
+.gravmix-hero h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 8px 0 16px;
+}
+
+.gravmix-subtitle {
+    color: var(--gravmix-muted);
+    margin-bottom: 24px;
+}
+
+.gravmix-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: var(--gravmix-accent);
+    color: #0f1115;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gravmix-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--gravmix-glow);
+}
+
+.gravmix-btn--ghost {
+    background: transparent;
+    border: 1px solid var(--gravmix-border);
+    color: var(--gravmix-text);
+}
+
+.gravmix-btn--accent {
+    background: linear-gradient(120deg, #d7d7d7, #7f8fe6);
+}
+
+.gravmix-hero__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.gravmix-hero__visual {
+    display: flex;
+    justify-content: center;
+}
+
+.gravmix-metal-card {
+    width: 240px;
+    height: 160px;
+    background: linear-gradient(135deg, #a6a6a6, #5f6368);
+    border-radius: 18px;
+    color: #0f1115;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: inset 0 2px 12px rgba(255, 255, 255, 0.2), 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.gravmix-categories {
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.gravmix-categories__item {
+    background: var(--gravmix-surface);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--gravmix-border);
+}
+
+.gravmix-categories__item ul {
+    padding-left: 18px;
+    margin: 8px 0 0;
+    color: var(--gravmix-muted);
+}
+
+.gravmix-section {
+    margin: 40px 0;
+}
+
+.gravmix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.gravmix-card {
+    padding: 24px;
+    background: var(--gravmix-surface);
+    border-radius: 14px;
+    border: 1px solid var(--gravmix-border);
+    transition: transform 0.3s ease;
+}
+
+.gravmix-card:hover {
+    transform: translateY(-4px);
+}
+
+.gravmix-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    background: var(--gravmix-surface);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--gravmix-border);
+}
+
+.gravmix-accordion {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--gravmix-border);
+    background: var(--gravmix-surface);
+}
+
+.gravmix-accordion__toggle {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: none;
+    color: var(--gravmix-text);
+    text-align: left;
+    cursor: pointer;
+}
+
+.gravmix-accordion__content {
+    display: none;
+    padding: 0 16px 16px;
+    color: var(--gravmix-muted);
+}
+
+.gravmix-accordion.is-open .gravmix-accordion__content {
+    display: block;
+}
+
+.gravmix-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.gravmix-tab {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--gravmix-border);
+    background: transparent;
+    color: var(--gravmix-text);
+    cursor: pointer;
+}
+
+.gravmix-tab.is-active {
+    background: var(--gravmix-accent);
+    color: #0f1115;
+}
+
+.gravmix-tab-content {
+    display: none;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--gravmix-surface);
+    border: 1px solid var(--gravmix-border);
+}
+
+.gravmix-tab-content.is-active {
+    display: block;
+}
+
+.gravmix-footer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--gravmix-border);
+}
+
+.gravmix-designer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.gravmix-designer__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--gravmix-surface);
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--gravmix-border);
+}
+
+.gravmix-designer__preview {
+    background: #0c0f14;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid var(--gravmix-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gravmix-input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--gravmix-border);
+    background: #11141b;
+    color: var(--gravmix-text);
+}
+
+.gravmix-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gravmix-status {
+    color: var(--gravmix-muted);
+    font-size: 14px;
+}
+
+.gravmix-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+@media (max-width: 720px) {
+    .gravmix {
+        padding: 20px;
+    }
+
+    .gravmix-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gravmix-actions {
+        flex-direction: column;
+    }
+}
